@@ -1,7 +1,12 @@
 {
   "extends": "@adonisjs/tsconfig/tsconfig.app.json",
   "compilerOptions": {
+    "types": ["@adonisjs/core", "node-forge"],
     "rootDir": "./",
     "outDir": "./build",
-  },
+    "moduleResolution": "node16",
+    "allowImportingTsExtensions": true,
+    "declaration": true,
+    "emitDeclarationOnly": true
+  }
 }

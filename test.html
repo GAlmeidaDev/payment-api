@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerar Token de Pagamento</title>
+    <script type="module">
+        import EfiPay from 'payment-token-efi';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('paymentForm').addEventListener('submit', async function(event) {
+                event.preventDefault();
+
+                const formData = new FormData(this);
+                const data = {
+                    brand: formData.get('brand'),
+                    number: formData.get('number'),
+                    cvv: formData.get('cvv'),
+                    expirationMonth: formData.get('expirationMonth'),
+                    expirationYear: formData.get('expirationYear'),
+                    reuse: formData.get('reuse') === 'on'
+                };
+
+                try {
+                    const result = await EfiPay.CreditCard.setAccount('Identificador_de_conta_aqui')
+                        .setEnvironment('production')
+                        .setCreditCardData(data)
+                        .getPaymentToken();
+
+                    document.getElementById('result').textContent = JSON.stringify(result, null, 2);
+                } catch (error) {
+                    console.error('Erro:', error);
+                    document.getElementById('result').textContent = 'Erro ao gerar token de pagamento.';
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Gerar Token de Pagamento</h1>
+    <form id="paymentForm">
+        <label for="brand">Marca do Cartão:</label>
+        <input type="text" id="brand" name="brand" required><br><br>
+
+        <label for="number">Número do Cartão:</label>
+        <input type="text" id="number" name="number" required><br><br>
+
+        <label for="cvv">CVV:</label>
+        <input type="text" id="cvv" name="cvv" required><br><br>
+
+        <label for="expirationMonth">Mês de Expiração:</label>
+        <input type="text" id="expirationMonth" name="expirationMonth" required><br><br>
+
+        <label for="expirationYear">Ano de Expiração:</label>
+        <input type="text" id="expirationYear" name="expirationYear" required><br><br>
+
+        <label for="reuse">Reutilizar:</label>
+        <input type="checkbox" id="reuse" name="reuse"><br><br>
+
+        <button type="submit">Gerar Token</button>
+    </form>
+
+    <h2>Resultado</h2>
+    <pre id="result"></pre>
+</body>
+</html>
