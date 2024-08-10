@@ -71,7 +71,6 @@ export const createImmediateCharge = async (data: {
     })
     return response.data
   } catch (error) {
-    console.log(error, '<==========')
     throw new Error(`Failed to create immediate charge: ${error.message}`)
   }
 }
