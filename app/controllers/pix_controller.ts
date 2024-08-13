@@ -1,5 +1,5 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import { getQrCode, createCob, createImmediateCharge } from '../services/pix_service.ts'
+import { getQrCode, createImmediateCharge, checkBillingPix } from '../services/pix_service.ts'
 
 export default class PixController {
   async getQrCode({ params, response }: HttpContext) {
@@ -12,15 +12,6 @@ export default class PixController {
     }
   }
 
-  async createCob({ request, response }: HttpContext) {
-    const tipoCob = request.input('tipoCob')
-    try {
-      const cobData = await createCob(tipoCob)
-      return response.json(cobData)
-    } catch (error) {
-      return response.status(500).json({ message: 'Error creating cob', error: error.message })
-    }
-  }
   async create({ request, response }: HttpContext) {
     const requestData = request.only(['calendario', 'devedor', 'valor', 'chave'])
 
@@ -29,6 +20,15 @@ export default class PixController {
       return response.status(201).json(charge)
     } catch (error) {
       return response.status(500).json({ error: error.message })
+    }
+  }
+  async checkBillingPix({ params, response }: HttpContext) {
+    const { txid } = params
+    try {
+      const data = await checkBillingPix(txid)
+      return response.json(data)
+    } catch (error) {
+      return response.status(500).json({ message: 'Error getting QR code', error: error.message })
     }
   }
 }

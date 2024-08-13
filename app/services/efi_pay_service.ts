@@ -30,10 +30,26 @@ export class EfiPayService {
         { payment: paymentData },
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json',
           },
         }
       )
+      return response.data
+    } catch (error) {
+      console.log(error, '<===')
+      throw new Error(`Failed to process payment: ${error.message}`)
+    }
+  }
+
+  static async checkPayment(chargeId: string) {
+    try {
+      const token = await efiPayAuthService.authenticateEfi()
+      const response = await axios.get(`${BASE_URL}/${chargeId}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
       return response.data
     } catch (error) {
       throw new Error(`Failed to process payment: ${error.message}`)

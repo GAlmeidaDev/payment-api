@@ -30,30 +30,6 @@ export const getQrCode = async (locId: string) => {
   }
 }
 
-export const createCob = async (tipoCob: string) => {
-  try {
-    const token = await efiPayAuthService.authenticatePix()
-    const response = await axios.post(
-      `${BASE_URL}/loc`,
-      { tipoCob },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-        httpsAgent,
-      }
-    )
-
-    console.log('Response:', token)
-    console.log('Response:', response)
-    console.log('Response Data:', response.data)
-
-    return response.data
-  } catch (error) {
-    throw new Error(`Failed to create cob: ${error.message}`)
-  }
-}
-
 export const createImmediateCharge = async (data: {
   calendario: { expiracao: number }
   devedor: { cpf: string; nome: string }
@@ -72,5 +48,20 @@ export const createImmediateCharge = async (data: {
     return response.data
   } catch (error) {
     throw new Error(`Failed to create immediate charge: ${error.message}`)
+  }
+}
+
+export const checkBillingPix = async (txid: string) => {
+  try {
+    const token = await efiPayAuthService.authenticatePix()
+    const response = await axios.get(`${BASE_URL}/cob/${txid}`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      httpsAgent,
+    })
+    return response.data
+  } catch (error) {
+    throw new Error(`Failed to get QR code: ${error.message}`)
   }
 }

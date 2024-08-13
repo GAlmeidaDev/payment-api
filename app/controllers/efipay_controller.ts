@@ -26,4 +26,13 @@ export default class EfiPayController {
         .json({ message: 'Error processing payment', error: error.message })
     }
   }
+  async checkPayment({ params, response }: HttpContext) {
+    const { chargeId } = params
+    try {
+      const chargeData = await EfiPayService.checkPayment(chargeId)
+      return response.json(chargeData)
+    } catch (error) {
+      return response.status(500).json({ message: 'Error creating charge', error: error.message })
+    }
+  }
 }
